@@ -2,58 +2,116 @@ package application;
 
 import supportStuff.applicationSupport.Coordinate;
 
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 
-public class PathFinderDfs {
-  private Stack<Coordinate> shortestPath = null;
+public class PathFinderDfs implements PathFinder_I {
+  private final int[][] maze;
+  private final Coordinate start;
+  private final Coordinate destination;
+  private final List<Coordinate> shortestPath;
+  private final Deque<Coordinate> stack;
+  private int shortestPathLength;
 
-  public Stack<Coordinate> findShortestPath(int[][] maze, Coordinate start, Coordinate destination) {
-    int width = maze.length;
-    int height = maze[0].length;
-    boolean[][] visited = new boolean[width][height];
-    Stack<Coordinate> path = new Stack<>();
-
-    path.push(start);
-    dfs(maze, start, destination, visited, path);
-    return shortestPath; // Return the shortest path found
+  public PathFinderDfs(final Maze maze) {
+    this.maze = maze.getMazeField();
+    this.start = maze.getStart();
+    this.destination = maze.getDestination();
+    this.shortestPath = new ArrayList<>();
+    this.stack = new LinkedList<>();
+    this.shortestPathLength = Integer.MAX_VALUE;
   }
 
-  private void dfs(
-      int[][] maze,
-      Coordinate currentField,
-      Coordinate destination,
-      boolean[][] visited,
-      Stack<Coordinate> path
-  ) {
-    if (currentField.getX() == destination.getX() && currentField.getY() == destination.getY()) {
-      if (shortestPath == null || path.size() < shortestPath.size()) {
-        shortestPath = (Stack<Coordinate>) path.clone();
+  @Override
+  public List<Coordinate> getShortestPath() {
+    maze[start.getX()][start.getY()] = 1;
+    stack.push(start);
+
+    while (!stack.isEmpty()) {
+      final Coordinate currentField = stack.pop();
+      if (currentField.equals(destination)) {
+        this.updateShortestPath();
+        continue;
       }
-      return;
-    }
-
-    int[][] possibleDirections = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    // oben, rechts, unten, links
-
-    for (int[] direction : possibleDirections) {
-      int newX = currentField.getX() + direction[0];
-      int newY = currentField.getY() + direction[1];
-      Coordinate nextField = new Coordinate(newX, newY);
-
-      if (isValid(maze, new Coordinate(newX, newY)) && !visited[newX][newY]) {
-        path.push(nextField);
-        visited[newX][newY] = true;
-        dfs(maze, nextField, destination, visited, path);
-        visited[newX][newY] = false;
-        path.pop();
+      if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
+        this.addNextFieldToStack(currentField);
       }
     }
+    return shortestPath.isEmpty() ? null : shortestPath;
   }
 
-  private boolean isValid(int[][] maze, Coordinate coord) {
-    return coord.getX() >= 0 && coord.getX() < maze.length &&
-        coord.getY() >= 0 && coord.getY() < maze[0].length &&
-        maze[coord.getX()][coord.getY()] != Integer.MIN_VALUE;
+  private void updateShortestPath() {
+    shortestPath.clear();
+
+    int cost = maze[destination.getX()][destination.getY()];
+    Coordinate field = destination;
+    shortestPath.add(destination);
+
+    while (!field.equals(start)) {
+      // top
+      if (field.getY() != 0 && maze[field.getX()][field.getY() - 1] == cost - 1) {
+        field = new Coordinate(field.getX(), field.getY() - 1);
+        shortestPath.add(0, field);
+        cost--;
+        continue;
+      }
+
+      // right
+      if (field.getX() != maze.length - 1 && maze[field.getX() + 1][field.getY()] == cost - 1) {
+        field = new Coordinate(field.getX() + 1, field.getY());
+        shortestPath.add(0, field);
+        cost--;
+        continue;
+      }
+
+      // bottom
+      if (field.getY() != maze[0].length - 1 && maze[field.getX()][field.getY() + 1] == cost - 1) {
+        field = new Coordinate(field.getX(), field.getY() + 1);
+        shortestPath.add(0, field);
+        cost--;
+        continue;
+      }
+
+      // left
+      if (field.getX() != 0 && maze[field.getX() - 1][field.getY()] == cost - 1) {
+        field = new Coordinate(field.getX() - 1, field.getY());
+        shortestPath.add(0, field);
+        cost--;
+      }
+    }
+    shortestPathLength = shortestPath.size();
   }
 
+  private void addNextFieldToStack(final Coordinate field) {
+    final int currentX = field.getX();
+    final int currentY = field.getY();
+
+    final int minCostOfNextField = maze[currentX][currentY] + 1;
+
+    // top
+    if (currentY != 0 && minCostOfNextField < maze[currentX][currentY - 1]) {
+      maze[currentX][currentY - 1] = minCostOfNextField;
+      stack.add(new Coordinate(currentX, currentY - 1));
+    }
+
+    // right
+    if (currentX != maze.length - 1 && minCostOfNextField < maze[currentX + 1][currentY]) {
+      maze[currentX + 1][currentY] = minCostOfNextField;
+      stack.add(new Coordinate(currentX + 1, currentY));
+    }
+
+    // bottom
+    if (currentY != maze[0].length - 1 && minCostOfNextField < maze[currentX][currentY + 1]) {
+      maze[currentX][currentY + 1] = minCostOfNextField;
+      stack.add(new Coordinate(currentX, currentY + 1));
+    }
+
+    // left
+    if (currentX != 0 && minCostOfNextField < maze[currentX - 1][currentY]) {
+      maze[currentX - 1][currentY] = minCostOfNextField;
+      stack.add(new Coordinate(currentX - 1, currentY));
+    }
+  }
 }

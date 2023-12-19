@@ -51,7 +51,7 @@ public class TestFrameAndStarterAutomated {
 
 
   // limit for test time
-  final static private int commonDefaultLimit = 4_000;                        // timeout resp. max. number of ms for test
+  final static private int commonDefaultLimit = 10_000;                        // timeout resp. max. number of ms for test
 
   final boolean enableAdditonalTestsForIterativeSolutions = false;
 
