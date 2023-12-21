@@ -15,23 +15,20 @@ import java.util.List;
  * @version {@value #encodedVersion}
  */
 public class PathFinder implements PathFinder_I, Serializable {
-  private final List<Coordinate> shortestPath;
+
+  private final Maze maze;
 
   public PathFinder(final Maze maze) {
-    int alternative = 2;
-
-    switch (alternative) {
-      case 1:
-        this.shortestPath = new PathFinderBfs(maze).getShortestPath();
-        break;
-      default:
-        this.shortestPath = new PathFinderDfs(maze).getShortestPath();
-        break;
-    }
+    this.maze = maze;
   }
 
   @Override
   public List<Coordinate> getShortestPath() {
-    return shortestPath;
+    int alternative = 2;
+
+    return switch (alternative) {
+      case 1 -> new PathFinderBfs(maze).getShortestPath();
+      default -> new PathFinderDfs(maze).getShortestPath();
+    };
   }
 }

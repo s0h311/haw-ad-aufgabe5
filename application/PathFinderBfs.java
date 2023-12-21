@@ -31,15 +31,19 @@ public class PathFinderBfs implements PathFinder_I {
 
     while (!queue.isEmpty()) {
       final Coordinate currentField = queue.remove();
+
       if (currentField.equals(destination)) {
         this.updateShortestPath();
         continue;
       }
+
+      // The current cost is less than the length of shortest path
       if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
         this.addNextFieldToStack(currentField);
       }
     }
-    return (shortestPath.isEmpty()) ? null : shortestPath;
+
+    return shortestPath.isEmpty() ? null : shortestPath;
   }
 
   private void updateShortestPath() {
@@ -49,6 +53,7 @@ public class PathFinderBfs implements PathFinder_I {
     Coordinate field = destination;
     shortestPath.add(destination);
 
+    // Backtracking
     while (!field.equals(start)) {
       // top
       if (field.getY() != 0 && maze[field.getX()][field.getY() - 1] == cost - 1) {

@@ -30,15 +30,18 @@ public class PathFinderDfs implements PathFinder_I {
     stack.push(start);
 
     while (!stack.isEmpty()) {
-      final Coordinate currentField = stack.pop();
+      final Coordinate currentField = stack.remove();
+
       if (currentField.equals(destination)) {
         this.updateShortestPath();
         continue;
       }
+
       if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
         this.addNextFieldToStack(currentField);
       }
     }
+
     return shortestPath.isEmpty() ? null : shortestPath;
   }
 
@@ -93,25 +96,25 @@ public class PathFinderDfs implements PathFinder_I {
     // top
     if (currentY != 0 && minCostOfNextField < maze[currentX][currentY - 1]) {
       maze[currentX][currentY - 1] = minCostOfNextField;
-      stack.add(new Coordinate(currentX, currentY - 1));
+      stack.addFirst(new Coordinate(currentX, currentY - 1));
     }
 
     // right
     if (currentX != maze.length - 1 && minCostOfNextField < maze[currentX + 1][currentY]) {
       maze[currentX + 1][currentY] = minCostOfNextField;
-      stack.add(new Coordinate(currentX + 1, currentY));
+      stack.addFirst(new Coordinate(currentX + 1, currentY));
     }
 
     // bottom
     if (currentY != maze[0].length - 1 && minCostOfNextField < maze[currentX][currentY + 1]) {
       maze[currentX][currentY + 1] = minCostOfNextField;
-      stack.add(new Coordinate(currentX, currentY + 1));
+      stack.addFirst(new Coordinate(currentX, currentY + 1));
     }
 
     // left
     if (currentX != 0 && minCostOfNextField < maze[currentX - 1][currentY]) {
       maze[currentX - 1][currentY] = minCostOfNextField;
-      stack.add(new Coordinate(currentX - 1, currentY));
+      stack.addFirst(new Coordinate(currentX - 1, currentY));
     }
   }
 }
