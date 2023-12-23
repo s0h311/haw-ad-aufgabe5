@@ -24,9 +24,7 @@ public class PathFinder implements PathFinder_I, Serializable {
 
   @Override
   public List<Coordinate> getShortestPath() {
-    int alternative = 2;
-
-    return switch (alternative) {
+    return switch (2) {
       case 1 -> new PathFinderBfs(maze).getShortestPath();
       default -> new PathFinderDfs(maze).getShortestPath();
     };

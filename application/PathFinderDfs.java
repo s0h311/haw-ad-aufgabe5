@@ -30,14 +30,14 @@ public class PathFinderDfs implements PathFinder_I {
     stack.push(start);
 
     while (!stack.isEmpty()) {
-      final Coordinate currentField = stack.remove();
+      final Coordinate currentField = stack.pop();
 
       if (currentField.equals(destination)) {
         this.updateShortestPath();
-        continue;
       }
 
-      if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
+      // The current cost is less than the length of shortest path
+      else if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
         this.addNextFieldToStack(currentField);
       }
     }
@@ -52,34 +52,35 @@ public class PathFinderDfs implements PathFinder_I {
     Coordinate field = destination;
     shortestPath.add(destination);
 
+    // Backtracking
     while (!field.equals(start)) {
+      final int currentX = field.getX();
+      final int currentY = field.getY();
+
       // top
-      if (field.getY() != 0 && maze[field.getX()][field.getY() - 1] == cost - 1) {
-        field = new Coordinate(field.getX(), field.getY() - 1);
+      if (currentY > 0 && maze[currentX][currentY - 1] == cost - 1) {
+        field = new Coordinate(currentX, currentY - 1);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // right
-      if (field.getX() != maze.length - 1 && maze[field.getX() + 1][field.getY()] == cost - 1) {
-        field = new Coordinate(field.getX() + 1, field.getY());
+      else if (currentX < maze.length - 1 && maze[currentX + 1][currentY] == cost - 1) {
+        field = new Coordinate(currentX + 1, currentY);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // bottom
-      if (field.getY() != maze[0].length - 1 && maze[field.getX()][field.getY() + 1] == cost - 1) {
-        field = new Coordinate(field.getX(), field.getY() + 1);
+      else if (currentY < maze[0].length - 1 && maze[currentX][currentY + 1] == cost - 1) {
+        field = new Coordinate(currentX, currentY + 1);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // left
-      if (field.getX() != 0 && maze[field.getX() - 1][field.getY()] == cost - 1) {
-        field = new Coordinate(field.getX() - 1, field.getY());
+      else if (currentX > 0 && maze[currentX - 1][currentY] == cost - 1) {
+        field = new Coordinate(currentX - 1, currentY);
         shortestPath.add(0, field);
         cost--;
       }
@@ -96,25 +97,25 @@ public class PathFinderDfs implements PathFinder_I {
     // top
     if (currentY != 0 && minCostOfNextField < maze[currentX][currentY - 1]) {
       maze[currentX][currentY - 1] = minCostOfNextField;
-      stack.addFirst(new Coordinate(currentX, currentY - 1));
+      stack.push(new Coordinate(currentX, currentY - 1));
     }
 
     // right
     if (currentX != maze.length - 1 && minCostOfNextField < maze[currentX + 1][currentY]) {
       maze[currentX + 1][currentY] = minCostOfNextField;
-      stack.addFirst(new Coordinate(currentX + 1, currentY));
+      stack.push(new Coordinate(currentX + 1, currentY));
     }
 
     // bottom
     if (currentY != maze[0].length - 1 && minCostOfNextField < maze[currentX][currentY + 1]) {
       maze[currentX][currentY + 1] = minCostOfNextField;
-      stack.addFirst(new Coordinate(currentX, currentY + 1));
+      stack.push(new Coordinate(currentX, currentY + 1));
     }
 
     // left
     if (currentX != 0 && minCostOfNextField < maze[currentX - 1][currentY]) {
       maze[currentX - 1][currentY] = minCostOfNextField;
-      stack.addFirst(new Coordinate(currentX - 1, currentY));
+      stack.push(new Coordinate(currentX - 1, currentY));
     }
   }
 }

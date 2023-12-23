@@ -34,11 +34,10 @@ public class PathFinderBfs implements PathFinder_I {
 
       if (currentField.equals(destination)) {
         this.updateShortestPath();
-        continue;
       }
 
       // The current cost is less than the length of shortest path
-      if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
+      else if (maze[currentField.getX()][currentField.getY()] < shortestPathLength) {
         this.addNextFieldToStack(currentField);
       }
     }
@@ -55,33 +54,33 @@ public class PathFinderBfs implements PathFinder_I {
 
     // Backtracking
     while (!field.equals(start)) {
+      final int currentX = field.getX();
+      final int currentY = field.getY();
+
       // top
-      if (field.getY() != 0 && maze[field.getX()][field.getY() - 1] == cost - 1) {
-        field = new Coordinate(field.getX(), field.getY() - 1);
+      if (currentY > 0 && maze[currentX][currentY - 1] == cost - 1) {
+        field = new Coordinate(currentX, currentY - 1);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // right
-      if (field.getX() != maze.length - 1 && maze[field.getX() + 1][field.getY()] == cost - 1) {
-        field = new Coordinate(field.getX() + 1, field.getY());
+      else if (currentX < maze.length - 1 && maze[currentX + 1][currentY] == cost - 1) {
+        field = new Coordinate(currentX + 1, currentY);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // bottom
-      if (field.getY() != maze[0].length - 1 && maze[field.getX()][field.getY() + 1] == cost - 1) {
-        field = new Coordinate(field.getX(), field.getY() + 1);
+      else if (currentY < maze[0].length - 1 && maze[currentX][currentY + 1] == cost - 1) {
+        field = new Coordinate(currentX, currentY + 1);
         shortestPath.add(0, field);
         cost--;
-        continue;
       }
 
       // left
-      if (field.getX() != 0 && maze[field.getX() - 1][field.getY()] == cost - 1) {
-        field = new Coordinate(field.getX() - 1, field.getY());
+      else if (currentX > 0 && maze[currentX - 1][currentY] == cost - 1) {
+        field = new Coordinate(currentX - 1, currentY);
         shortestPath.add(0, field);
         cost--;
       }
