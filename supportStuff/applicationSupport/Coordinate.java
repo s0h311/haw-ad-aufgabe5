@@ -34,16 +34,15 @@ public class Coordinate implements Cloneable, Serializable {
     return new Coordinate(x, y);
   }//method()
 
-
   @Override
   public boolean equals(final Object otherObject) {
-    if (this == otherObject) return true;
-    if (null == otherObject) return false;
-    if (getClass() != otherObject.getClass()) return false;
-    final Coordinate other = (Coordinate) (otherObject);
-    if (x != other.x) return false;
-    if (y != other.y) return false;
-    return true;
+    if (otherObject == null) return false;
+
+    if (otherObject instanceof Coordinate otherCoordinate) {
+      return this.x == otherCoordinate.x && this.y == otherCoordinate.y;
+    }
+
+    return false;
   }//method()
 
   @Override
